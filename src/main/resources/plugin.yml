@@ -1,0 +1,43 @@
+author: wizzledonker
+database: false
+description: OblicomCore is the core faction and utility plugin used for the oblicom
+  minecraft server. It provides utilities for various aspects of the server.
+main: me.wizzledonker.plugins.oblicomcore.OblicomCore
+name: oblicomCore
+startup: postworld
+url: http://www.oblicom.tk/
+version: '1.0'
+depend: [Vault]
+permissions:
+  oblicom.pickpocket.steal:
+    description: These players may attempt to steal
+    default: false
+  oblicom.pickpocket.nosteal:
+    description: These players may not be stolen from
+    default: false
+  oblicom.lockpick.pick:
+    description: Players with this permission can lockpick
+    default: false
+  oblicom.wanted.exempt:
+    description: Players with this permission are exempt from being on the list.
+    default: false
+  oblicom.wanted.view:
+    description: These players can view the wanted list
+    default: true
+commands:
+  crules:
+    description: Views the citizen rule book
+    usage: /<command>
+    aliases: [citizenrules, baserules, crulebook]
+  brules:
+    description: Views the builder rule book
+    usage: /<command>
+    aliases: [buildrules, brulebook]
+  frules:
+    description: View the faction rule book
+    usage: /<command>
+    aliases: [factionrules]
+  wanted:
+    description: Views players who are wanted among the police
+    usage: /<command>
+    aliases: [wantedpeople, hitlist, criminals]
