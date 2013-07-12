@@ -5,9 +5,9 @@ description: OblicomCore is the core faction and utility plugin used for the obl
 main: me.wizzledonker.plugins.oblicomcore.OblicomCore
 name: oblicomCore
 startup: postworld
-url: http://www.oblicom.tk/
-version: '1.0'
-depend: [Vault]
+url: http://www.oblicom.com/
+version: '1.2'
+depend: [Vault, oblicomRanks]
 permissions:
   oblicom.pickpocket.steal:
     description: These players may attempt to steal
@@ -21,23 +21,55 @@ permissions:
   oblicom.wanted.exempt:
     description: Players with this permission are exempt from being on the list.
     default: false
+  oblicom.wanted.fullexempt:
+    description: Players with this permission are fully exempt from being wanted
+    default: false
   oblicom.wanted.view:
     description: These players can view the wanted list
+    default: op
+  oblicom.wanted.remove:
+    description: These players can remove players from the wanted list
+    default: op
+  oblicom.wanted.add:
+    description: These players can add players to the wanted list
+    default: op
+  oblicom.wanted.locator:
+    description: These players can use the locator stick to find wanted players
+    default: op
+  oblicom.pvp.neutral:
+    description: These players can't damage or recieve damage from players
+    default: false
+  oblicom.jail.set:
+    description: These players have the ability to set the Jail
+    default: op
+  oblicom.jail.unjail:
+    description: These players have the ability to unjail
+    default: op
+  oblicom.jail.bail:
+    description: These players may bail out of jail
     default: true
 commands:
-  crules:
-    description: Views the citizen rule book
-    usage: /<command>
-    aliases: [citizenrules, baserules, crulebook]
-  brules:
-    description: Views the builder rule book
-    usage: /<command>
-    aliases: [buildrules, brulebook]
-  frules:
-    description: View the faction rule book
-    usage: /<command>
-    aliases: [factionrules]
   wanted:
     description: Views players who are wanted among the police
     usage: /<command>
     aliases: [wantedpeople, hitlist, criminals]
+  unwanted:
+    description: Removes a player from the wanted list
+    usage: /<command> <player>
+    aliases: [removefromwanted, wremove, unwant]
+  addwanted:
+    description: Adds a player to the wanted list
+    usage: /<command> <player> <reason>
+    aliases: [addtowanted, wadd]
+  oblisetjail:
+    description: Set the Oblicom Jail
+    usage: /<command>
+    aliases: [setjail, jailset]
+  obliunjail:
+    description: Unjail a player
+    usage: /<command> <player>
+    aliases: [unjail, removefromjail]
+  bail:
+    description: Allows a player to bail out of jail
+    usage: /<command>
+    aliases: [bailout, payout, unjailme]

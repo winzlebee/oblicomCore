@@ -45,6 +45,42 @@ public class oblicomWanted implements CommandExecutor {
             }
             return true;
         }
+        if (cmnd.getName().equalsIgnoreCase("unwanted")) {
+            if (cs instanceof Player) {
+                Player player = (Player) cs;
+                if (!player.hasPermission("oblicom.wanted.remove")) {
+                    player.sendMessage("You don't have permission to remove players from the wanted list!");
+                    return true;
+                }
+            }
+            if (strings.length == 1) {
+                if (isInList(strings[0])) {
+                    removeFromList(strings[0]);
+                    cs.sendMessage(ChatColor.GREEN + "Player " + strings[0] + " is no longer wanted.");
+                } else {
+                    cs.sendMessage(ChatColor.RED + strings[0] + " isn't on the wanted list!");
+                }
+                return true;
+            }
+        }
+        if (cmnd.getName().equalsIgnoreCase("addwanted")) {
+            if (cs instanceof Player) {
+                Player player = (Player) cs;
+                if (!player.hasPermission("oblicom.wanted.add")) {
+                    player.sendMessage("You don't have permission to add players to the wanted list!");
+                    return true;
+                }
+            }
+            if (strings.length == 2) {
+                if (!isInList(strings[0])) {
+                    addToList(strings[0], strings[1]);
+                    cs.sendMessage(ChatColor.GREEN + "Player " + strings[0] + " is now wanted for " + strings[1]);
+                } else {
+                    cs.sendMessage(ChatColor.RED + strings[0] + " is already wanted!");
+                }
+                return true;
+            }
+        }
         return false;
     }
     
@@ -80,21 +116,25 @@ public class oblicomWanted implements CommandExecutor {
             result.add(p + " for " + getWantedConfig().getString("wanted." + p + ".reason"));
         }
         
+        if (result.isEmpty()) {
+            result.add("Nobody is currently wanted for anything!");
+        }
+        
         return result;
     }
     
-    public void addToList(Player killer, String reason) {
-        getWantedConfig().set("wanted." + killer.getName() + ".reason", reason);
+    public void addToList(String killer, String reason) {
+        getWantedConfig().set("wanted." + killer + ".reason", reason);
         saveWantedConfig();
     }
     
-    public void removeFromList(Player killer) {
-        getWantedConfig().set("wanted." + killer.getName(), null);
+    public void removeFromList(String killer) {
+        getWantedConfig().set("wanted." + killer, null);
         saveWantedConfig();
     }
     
-    public boolean isInList(Player killer) {
-        return getWantedConfig().getConfigurationSection("wanted").contains(killer.getName());
+    public boolean isInList(String killer) {
+        return getWantedConfig().getConfigurationSection("wanted").contains(killer);
     }
     
 }
