@@ -1,4 +1,4 @@
-author: wizzledonker
+author: wizzledonker, nagib.kanaan
 database: false
 description: OblicomCore is the core faction and utility plugin used for the oblicom
   minecraft server. It provides utilities for various aspects of the server.
@@ -6,7 +6,7 @@ main: me.wizzledonker.plugins.oblicomcore.OblicomCore
 name: oblicomCore
 startup: postworld
 url: http://www.oblicom.com/
-version: '1.2'
+version: '2.0'
 depend: [Vault, oblicomRanks]
 permissions:
   oblicom.pickpocket.steal:
@@ -42,6 +42,9 @@ permissions:
   oblicom.jail.set:
     description: These players have the ability to set the Jail
     default: op
+  oblicom.jail.jail:
+    description: These players have the ability to move players to the Jail
+    default: op
   oblicom.jail.unjail:
     description: These players have the ability to unjail
     default: op
@@ -65,6 +68,10 @@ commands:
     description: Set the Oblicom Jail
     usage: /<command>
     aliases: [setjail, jailset]
+  oblijail:
+    description: Jail a player
+    usage: /<command> <player>
+    aliases: [jail, addtojail]
   obliunjail:
     description: Unjail a player
     usage: /<command> <player>
