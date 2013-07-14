@@ -78,15 +78,15 @@ public class OblicomWorld {
     }
     
     public static OblicomWorld getWorld() {
-        return world;
+        return OblicomWorld.world;
     }    
     
     public static OblicomWorld getWorld(Plugin plugin) throws OblicomWorldException {
-        if (world == null) {
-            world = new OblicomWorld(plugin);
+        if (OblicomWorld.world == null) {
+            OblicomWorld.world = new OblicomWorld(plugin);
         }
         
-        return world;
+        return OblicomWorld.world;
     }
     
     /**

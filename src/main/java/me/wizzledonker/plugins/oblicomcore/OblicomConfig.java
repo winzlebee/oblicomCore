@@ -56,15 +56,15 @@ public class OblicomConfig {
     }
     
     public static YamlConfiguration getConfiguration() {
-        return instance.configuration;
+        return OblicomConfig.instance.configuration;
     }
 
     public static YamlConfiguration getConfiguration(Plugin plugin) throws OblicomConfigException {
-        if (instance == null) {
-            instance = new OblicomConfig(plugin);
+        if (OblicomConfig.instance == null) {
+            OblicomConfig.instance = new OblicomConfig(plugin);
         }
         
-        return instance.configuration;
+        return OblicomConfig.instance.configuration;
     }
     
     /**
