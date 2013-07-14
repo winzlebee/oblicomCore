@@ -69,7 +69,7 @@ public class OblicomCore extends JavaPlugin {
     }
 
     public static void log(String text) {
-        System.out.println("[OlibomCoret] " + text);
+        System.out.println("[oblicomCore] " + text);
     }
 
     private void _registerCommands() {

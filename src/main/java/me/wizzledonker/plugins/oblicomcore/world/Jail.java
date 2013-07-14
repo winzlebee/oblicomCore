@@ -22,7 +22,7 @@ public class Jail {
     private ConfigurationSection location;
     
     public Jail () {
-        this.world = OblicomWorld.getWorld();;
+        this.world = OblicomWorld.getWorld();
         this.data = world.getData().getConfigurationSection("police.jail.prisoners");
         this.location = world.getData().getConfigurationSection("police.jail.location");
         

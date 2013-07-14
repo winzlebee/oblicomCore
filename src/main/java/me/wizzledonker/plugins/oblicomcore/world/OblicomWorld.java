@@ -68,13 +68,6 @@ public class OblicomWorld {
                 throw new OblicomWorldException("Error to save the data file of the world", error);
             }
         }
-        
-        // Setup the features
-        wanted = new Wanted();
-        jail = new Jail();
-        stealer = new Stealer();
-        tracker = new Tracker();
-        lockpicker = new Lockpicker();
     }
     
     public static OblicomWorld getWorld() {
@@ -84,9 +77,18 @@ public class OblicomWorld {
     public static OblicomWorld getWorld(Plugin plugin) throws OblicomWorldException {
         if (OblicomWorld.world == null) {
             OblicomWorld.world = new OblicomWorld(plugin);
+            OblicomWorld.world.loadFeatures();
         }
         
         return OblicomWorld.world;
+    }
+    
+    private void loadFeatures() {
+        wanted = new Wanted();
+        jail = new Jail();
+        stealer = new Stealer();
+        tracker = new Tracker();
+        lockpicker = new Lockpicker();        
     }
     
     /**
