@@ -89,11 +89,11 @@ public class Citizen extends OblicomPlayer {
         final Citizen citizen = this;
         world.getJail().arrestCitizen(this, reason, time);
         
-        world.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(world.getPlugin(), new Runnable() {
+        /*world.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(world.getPlugin(), new Runnable() {
             public void run() {
                 citizen.release();
             }
-        }, time * 60 * 20L); 
+        }, time * 60 * 20L); */
         
         pluginManager.callEvent(new CitizenArrestEvent((Citizen) this, reason, time));
     }
@@ -126,11 +126,11 @@ public class Citizen extends OblicomPlayer {
         final Citizen citizen = this;
         world.getWanted().addToList(citizen, reason, time);
         
-        world.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(world.getPlugin(), new Runnable() {
+        /*world.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(world.getPlugin(), new Runnable() {
             public void run() {
                 citizen.unwanted();
             }
-        }, time * 60 * 20L); 
+        }, time * 60 * 20L); */
 
         pluginManager.callEvent(new CitizenWantedEvent((Citizen) this, reason, time));
     }
