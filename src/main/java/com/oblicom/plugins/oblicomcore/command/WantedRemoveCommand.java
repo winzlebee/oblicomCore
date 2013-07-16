@@ -38,19 +38,17 @@ public class WantedRemoveCommand extends OblicomCommand {
             
             if (!player.hasPermission(requiredPermission)) {
                 player.sendMessage(withoutPermissionMessage);
-                return false;
+                return true;
             }
         }
         
         if (params.length > 1) {
            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Too many arguments!");
-           sender.sendMessage(ChatColor.LIGHT_PURPLE + "Arguments must be: <player>!");
            return false;
         }
         
         if (params.length < 1) {
            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Not enough arguments!");
-           sender.sendMessage(ChatColor.LIGHT_PURPLE + "Arguments must be: <player>!");
            return false;
         }
         
@@ -60,7 +58,7 @@ public class WantedRemoveCommand extends OblicomCommand {
         
         if (!citizen.isWanted()) {
            sender.sendMessage(ChatColor.RED + "Player " + params[0] + " isn't on the wanted list!");
-           return false;
+           return true;
         }
         
         citizen.unwanted();

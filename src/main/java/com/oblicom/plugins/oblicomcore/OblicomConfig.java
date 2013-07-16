@@ -85,6 +85,10 @@ public class OblicomConfig {
 
         configuration.options().header("OblicomCore Config.");
         
+        // Database
+        configuration.addDefault("database.filename", "oblicom");
+        configuration.addDefault("database.extension", ".sqlite");
+        
         // Police Config : Jail
         configuration.addDefault("police.jail.time", 5);
         configuration.addDefault("police.jail.bail_amount", 250.0);
