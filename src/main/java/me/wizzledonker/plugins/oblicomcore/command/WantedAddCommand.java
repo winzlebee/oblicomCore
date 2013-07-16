@@ -38,19 +38,17 @@ public class WantedAddCommand extends OblicomCommand {
             
             if (!player.hasPermission(requiredPermission)) {
                 player.sendMessage(withoutPermissionMessage);
-                return false;
+                return true;
             }
         }
         
         if (params.length > 2) {
            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Too many arguments!");
-           sender.sendMessage(ChatColor.LIGHT_PURPLE + "Arguments must be: <player> <reason>!");
            return false;
         }
         
         if (params.length < 2) {
            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Not enough arguments!");
-           sender.sendMessage(ChatColor.LIGHT_PURPLE + "Arguments must be: <player> <reason>!");
            return false;
         }
         
@@ -60,7 +58,7 @@ public class WantedAddCommand extends OblicomCommand {
         
         if (citizen.isWanted()) {
            sender.sendMessage(ChatColor.RED + "Player " + params[0] + " already wanted!");
-           return false;
+           return true;
         }
         
         citizen.wanted(params[1]);

@@ -1,7 +1,5 @@
 package me.wizzledonker.plugins.oblicomcore.command;
 
-import java.util.List;
-import java.util.Arrays;
 import org.bukkit.ChatColor;
 
 import org.bukkit.command.Command;
@@ -33,7 +31,7 @@ public class SetjailCommand extends OblicomCommand {
         if (sender instanceof Player) {
             if (!sender.hasPermission(requiredPermission)) {
                 sender.sendMessage(withoutPermissionMessage);
-                return false;
+                return true;
             }
             
             if (params.length > 0) {
@@ -46,11 +44,11 @@ public class SetjailCommand extends OblicomCommand {
                 return true;
             } else {
                 sender.sendMessage(ChatColor.RED + "Error to set the Jail location!");
-                return false;
+                return true;
             }
         }
         
         sender.sendMessage(ChatColor.RED + "You must be a player!");
-        return false;
+        return true;
     }
 }

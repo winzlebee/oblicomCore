@@ -35,7 +35,7 @@ public class WantedCommand extends OblicomCommand {
             
             if (!player.hasPermission(requiredPermission)) {
                 player.sendMessage(withoutPermissionMessage);
-                return false;
+                return true;
             }
         }
         

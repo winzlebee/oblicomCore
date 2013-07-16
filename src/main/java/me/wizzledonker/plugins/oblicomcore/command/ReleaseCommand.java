@@ -37,33 +37,31 @@ public class ReleaseCommand extends OblicomCommand {
             
             if (!player.hasPermission(requiredPermission)) {
                 player.sendMessage(withoutPermissionMessage);
-                return false;
+                return true;
             }
         }
         
         if (params.length > 1) {
            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Too many arguments!");
-           sender.sendMessage(ChatColor.LIGHT_PURPLE + "Arguments must be: <player>!");
            return false;
         }
         
         if (params.length < 1) {
            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Not enough arguments!");
-           sender.sendMessage(ChatColor.LIGHT_PURPLE + "Arguments must be: <player>!");
            return false;
         }
         
         Player target = plugin.getServer().getPlayer(params[0]);
         if (target == null) {
            sender.sendMessage(ChatColor.DARK_RED +  params[0] + " is not online!");
-           return false;
+           return true;
         }
         
         Citizen citizen = new Citizen(target);
         
         if (!citizen.isArrested()) {
            sender.sendMessage(ChatColor.RED + "Player " + params[0] + " isn't jailed!");
-           return false;
+           return true;
         }
         
         citizen.release();
