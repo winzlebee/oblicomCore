@@ -5,8 +5,6 @@ package com.oblicom.plugins.oblicomcore.listeners;
 
 import com.oblicom.plugins.oblicomcore.OblicomCore;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,9 +22,6 @@ public class PlayerListener implements Listener {
     public PlayerListener(OblicomCore plugin) {
         this.plugin = plugin;
     }
-    
-    private Set<String> noLockPick = new HashSet<String>();
-    private Set<String> noLocatorStick = new HashSet<String>();
     
     // @EventHandler(priority = EventPriority.HIGHEST)
     // public void onPlayerJoin(PlayerJoinEvent event) {

@@ -60,13 +60,11 @@ public class Criminal extends Citizen {
 
         if (player.getLevel() < configuration.getInt("criminal.pickpocket.experience")) {
             pluginManager.callEvent(new CriminalStealFailEvent(this, "without_experience"));
-            player.sendMessage(ChatColor.YELLOW + "You don't have enough experience to pickpocket. You need level " + configuration.getInt("criminal.pickpocket.experience"));
             return 0;
         }
 
         if (world.getStealer().isInList(this)) {
             pluginManager.callEvent(new CriminalStealFailEvent(this, "steal_recently"));
-            player.sendMessage(ChatColor.RED + "Cool it! You can't steal that often!");
             return 0;
         }
         
@@ -139,19 +137,16 @@ public class Criminal extends Citizen {
         
         if (itemInHand.getTypeId() != configuration.getInt("criminal.lockpick.item")) {
             pluginManager.callEvent(new CriminalLockpickFailEvent(this, "wrong_item"));
-            player.sendMessage(ChatColor.AQUA + "Use a " + Material.getMaterial(configuration.getInt("criminal.lockpick.item")) + " to lockpick!");
             return false;
         }
         
         if (player.getLevel() < configuration.getInt("criminal.lockpick.experience")) {
             pluginManager.callEvent(new CriminalLockpickFailEvent(this, "without_experience"));
-            player.sendMessage(ChatColor.YELLOW + "You don't have enough experience to rob chests. You need level " + configuration.getInt("criminal.lockpick.experience"));
             return false;
         }
         
         if (world.getLockpicker().isInList(this)) {
             pluginManager.callEvent(new CriminalLockpickFailEvent(this, "lockpick_recently"));
-            player.sendMessage(ChatColor.RED + "Cool it! You can't pick locks that often!");
             return false;
         }
 
