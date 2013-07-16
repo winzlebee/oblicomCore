@@ -27,7 +27,10 @@ public class Criminal extends Citizen {
      * @return percent chance
      */        
     private int stealChance() {
-        int bonusChance = (player.getEquipment().getBoots().getType() == Material.GOLD_BOOTS) ? 5 : 0;        
+        int bonusChance = 0;
+        if (player.getEquipment().getBoots() != null) {
+            bonusChance = (player.getEquipment().getBoots().getType() == Material.GOLD_BOOTS) ? 5 : 0;
+        }
         return configuration.getInt("criminal.pickpocket.chance") + bonusChance;
     }
     
@@ -104,7 +107,10 @@ public class Criminal extends Citizen {
      * @return percent chance
      */        
     private int lockpickChance() {
-        int bonusChance = (player.getEquipment().getBoots().getType() == Material.GOLD_BOOTS) ? 5 : 0;        
+        int bonusChance = 0;
+        if (player.getEquipment().getBoots() != null) {
+            bonusChance = (player.getEquipment().getBoots().getType() == Material.GOLD_BOOTS) ? 5 : 0;
+        }
         return configuration.getInt("criminal.pickpocket.chance") + bonusChance;
     }
     
