@@ -197,9 +197,7 @@ public class OblicomWorld {
      * @return the File object for the world file
      */    
     private File getDataFile() {
-        File pluginsFolder = plugin.getDataFolder().getParentFile();
-
-        return new File(new File(pluginsFolder, "OblicomCore"), "world.yml");
+        return new File(plugin.getDataFolder(), "world.yml");
     }
     
     /**

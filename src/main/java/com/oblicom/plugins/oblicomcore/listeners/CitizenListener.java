@@ -38,7 +38,7 @@ public class CitizenListener implements Listener {
         Citizen citizen = event.getCitizen();
         
         citizen.getPlayer().teleport(citizen.getPlayer().getWorld().getSpawnLocation());
-        citizen.sendChatMessage(ChatColor.GREEN + "You was released.");
+        citizen.sendChatMessage(ChatColor.GREEN + "You have been released.");
     }
 
     @EventHandler
@@ -48,7 +48,7 @@ public class CitizenListener implements Listener {
             String message = OblicomCore.configuration.getString("criminal.pickpocket.message");
             
             message = message.replace("%thief%", event.getCriminal().getPlayer().getName());
-            message = message.replace("%thief%", event.getCitizen().getPlayer().getName());
+            message = message.replace("%victim%", event.getCitizen().getPlayer().getName());
             
             plugin.getServer().broadcastMessage(ChatColor.DARK_PURPLE + message);
         }
@@ -56,7 +56,7 @@ public class CitizenListener implements Listener {
 
     @EventHandler
     public void onCitizenWanted(final CitizenWantedEvent event) {
-        event.getCitizen().sendChatMessage(ChatColor.RED + "You was wanted now.");
+        event.getCitizen().sendChatMessage(ChatColor.RED + "You are now wanted.");
     }
 
     @EventHandler

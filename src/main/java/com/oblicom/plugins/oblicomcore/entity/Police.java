@@ -43,7 +43,7 @@ public class Police extends Citizen {
      * 
      */    
     public void trackWantedPlayers() {
-        if (player.hasPermission("oblicom.wanted.locator")) {
+        if (!player.hasPermission("oblicom.wanted.locator")) {
             pluginManager.callEvent(new PoliceWantedTrackFailEvent(this, "without_permission"));
             return;
         }

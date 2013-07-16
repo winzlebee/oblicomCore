@@ -94,7 +94,7 @@ public class Jail {
             world.save();
             return true;
         } catch (OblicomWorldException error) {
-            OblicomCore.log("Erro to save the jail location: " + error.getMessage());
+            OblicomCore.log("Error to save the jail location: " + error.getMessage());
             return false;
         }
     }

@@ -13,6 +13,7 @@ import com.oblicom.plugins.oblicomcore.event.criminal.CriminalStealEvent;
 import com.oblicom.plugins.oblicomcore.event.criminal.CriminalStealFailEvent;
 import com.oblicom.plugins.oblicomcore.event.criminal.CriminalLockpickEvent;
 import com.oblicom.plugins.oblicomcore.event.criminal.CriminalLockpickFailEvent;
+import org.bukkit.ChatColor;
 
 public class Criminal extends Citizen {
     
@@ -70,10 +71,10 @@ public class Criminal extends Citizen {
             pluginManager.callEvent(new CriminalStealFailEvent(this, "victim_alerted"));
             pluginManager.callEvent(new CitizenStolenEvent(citizenVictim, this, true));
             
-            player.damage(configuration.getInt("criminal.pickcpocket.damage"));
+            player.damage(configuration.getInt("criminal.pickpocket.damage"));
             
             wanted("pickpocketing");
-            citizenVictim.addScore(configuration.getInt("criminal.pickcpocket.score"));
+            citizenVictim.addScore(configuration.getInt("criminal.pickpocket.score"));
 
             return 0;
         }
@@ -121,7 +122,7 @@ public class Criminal extends Citizen {
      * @param item to lockpick
      */    
     public boolean lockpick(Block item) {        
-        if (player.hasPermission("oblicom.lockpick.pick")) {
+        if (!player.hasPermission("oblicom.lockpick.pick")) {
             pluginManager.callEvent(new CriminalLockpickFailEvent(this, "without_permission"));
             return false;
         }
@@ -130,6 +131,7 @@ public class Criminal extends Citizen {
         
         if (itemInHand.getTypeId() != configuration.getInt("criminal.lockpick.item")) {
             pluginManager.callEvent(new CriminalLockpickFailEvent(this, "wrong_item"));
+            player.sendMessage(ChatColor.AQUA + "Use a " + Material.getMaterial(configuration.getInt("criminal.lockpick.item")) + " to lockpick!");
             return false;
         }
         

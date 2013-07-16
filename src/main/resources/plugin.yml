@@ -7,7 +7,7 @@ name: oblicomCore
 startup: postworld
 url: http://www.oblicom.com/
 version: '2.1'
-depend: [Vault, oblicomRanks]
+depend: [Vault, oblicomRanks, SQLibrary]
 permissions:
   oblicom.pickpocket.steal:
     description: These players may attempt to steal
