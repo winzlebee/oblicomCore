@@ -40,7 +40,7 @@ public class SetjailCommand extends OblicomCommand {
             }            
             
             if (OblicomCore.world.getJail().setLocation((Player) sender)) {
-                sender.sendMessage(ChatColor.GREEN + "Setted a new to location to the Jail!");
+                sender.sendMessage(ChatColor.GREEN + "Set the jail location to your position!");
                 return true;
             } else {
                 sender.sendMessage(ChatColor.RED + "Error to set the Jail location!");

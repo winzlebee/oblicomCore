@@ -105,10 +105,10 @@ public class Jail {
      * @return location
      */    
     public Location getLocation() {
-        World map = world.getPlugin().getServer().getWorld(location.getString("police.jail.location.world"));
-        int x = location.getInt("police.jail.location.x");
-        int y = location.getInt("police.jail.location.y");
-        int z = location.getInt("police.jail.location.z");
+        World map = world.getPlugin().getServer().getWorld(location.getString("world"));
+        int x = location.getInt("x");
+        int y = location.getInt("y");
+        int z = location.getInt("z");
         
         return new Location(map, x, y, z);
     }

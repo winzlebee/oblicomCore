@@ -66,18 +66,18 @@ public class EntityListener implements Listener {
                 citizenKilled.unwanted();
                 citizenKilled.arrest("killed when wanted");
                 
-                citizenKilled.subtractScore(OblicomCore.configuration.getInt("pocile.jail.score"));
+                citizenKilled.subtractScore(OblicomCore.configuration.getInt("police.jail.score"));
                 
                 if (citizenKiller.getPlayer().hasPermission("oblicom.wanted.exempt")) {
-                    citizenKiller.addScore(OblicomCore.configuration.getInt("award.passive") * 2);
+                    citizenKiller.addScore(OblicomCore.configuration.getInt("police.jail.score") * 2);
                     return;
                 }
             }
             
-            citizenKiller.addScore(OblicomCore.configuration.getInt("pocile.jail.score"));
+            citizenKiller.addScore(OblicomCore.configuration.getInt("police.jail.score"));
                 
             if (citizenKiller.getPlayer().hasPermission("oblicom.wanted.exempt")) {
-                citizenKiller.subtractScore(OblicomCore.configuration.getInt("pocile.jail.score") * 2);
+                citizenKiller.subtractScore(OblicomCore.configuration.getInt("police.jail.score") * 2);
             }
             
             if (citizenKiller.getPlayer().hasPermission("oblicom.wanted.fullexempt")) {
