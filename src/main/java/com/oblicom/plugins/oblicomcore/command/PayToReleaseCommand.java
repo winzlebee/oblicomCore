@@ -47,27 +47,27 @@ public class PayToReleaseCommand extends OblicomCommand {
 
             if (!citizen.isArrested()) {
                sender.sendMessage(ChatColor.AQUA + "You aren't jailed!");
-               return false;
+               return true;
             }
             
             Double priceToRelease = OblicomCore.configuration.getDouble("police.jail.bail_amount");
             
             if (!citizen.hasMoney(priceToRelease)) {
                sender.sendMessage(ChatColor.RED + "You don't have enough money to bail out. Rot!");
-               return false;
+               return true;
             }
             
             if (citizen.takeMoney(priceToRelease) != priceToRelease) {
                sender.sendMessage(ChatColor.RED + "We were unable to withdraw money from your account.!");
                OblicomCore.log("Warning: Error to withdraw money from " + sender.getName());
-               return false;
+               return true;
             }
             
             citizen.release();
         }
         
         sender.sendMessage(ChatColor.RED + "You must be a player!");
-        return false;
+        return true;
     }
 }
 

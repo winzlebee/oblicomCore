@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 
 import org.bukkit.ChatColor;
 
+import com.oblicom.plugins.oblicomcore.entity.Citizen;
 import com.oblicom.plugins.oblicomcore.event.citizen.CitizenArrestEvent;
 import com.oblicom.plugins.oblicomcore.event.citizen.CitizenReleaseEvent;
 import com.oblicom.plugins.oblicomcore.event.citizen.CitizenStolenEvent;
@@ -26,12 +27,18 @@ public class CitizenListener implements Listener {
     }
     
     public void onCitizenArrested(final CitizenArrestEvent event) {
-        event.getCitizen().sendChatMessage(ChatColor.RED + "You were arrested.");
+        Citizen citizen = event.getCitizen();
+        
+        citizen.getPlayer().teleport(OblicomCore.world.getJail().getLocation());
+        citizen.sendChatMessage(ChatColor.RED + "You were arrested.");
     }
 
     @EventHandler
     public void onCitizenReleased(CitizenReleaseEvent event) {
-        event.getCitizen().sendChatMessage(ChatColor.GREEN + "You was released.");
+        Citizen citizen = event.getCitizen();
+        
+        citizen.getPlayer().teleport(citizen.getPlayer().getWorld().getSpawnLocation());
+        citizen.sendChatMessage(ChatColor.GREEN + "You was released.");
     }
 
     @EventHandler

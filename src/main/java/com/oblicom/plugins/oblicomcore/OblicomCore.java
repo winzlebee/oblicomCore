@@ -8,6 +8,7 @@ import com.oblicom.plugins.oblicomcore.command.WantedAddCommand;
 import com.oblicom.plugins.oblicomcore.command.WantedCommand;
 import com.oblicom.plugins.oblicomcore.command.WantedRemoveCommand;
 import com.oblicom.plugins.oblicomcore.command.SetjailCommand;
+import com.oblicom.plugins.oblicomcore.database.OblicomDatabase;
 
 import com.oblicom.plugins.oblicomcore.listeners.CitizenListener;
 import com.oblicom.plugins.oblicomcore.listeners.CriminalListener;
@@ -21,6 +22,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.oblicom.plugins.oblicomcore.exceptions.OblicomConfigException;
 import com.oblicom.plugins.oblicomcore.exceptions.OblicomWorldException;
+import com.oblicom.plugins.oblicomcore.exceptions.OblicomDatabaseException;
+
+import lib.PatPeter.SQLibrary.Database;
 
 /*
  * This is the main plugin for Oblicom, the minecraft server
@@ -33,6 +37,7 @@ public class OblicomCore extends JavaPlugin {
     public PluginManager pluginManager;
     public static YamlConfiguration configuration;
     public static OblicomWorld world;
+    public static Database database;
 
     @Override
     public void onDisable() {
@@ -51,6 +56,14 @@ public class OblicomCore extends JavaPlugin {
             return;
         }
 
+        try {
+            database = OblicomDatabase.getDatabase(this);
+        } catch (OblicomDatabaseException error) {
+            log("Error to load Oblicom database: " + error.getMessage());
+            pluginManager.disablePlugin(this);
+            return;
+        }
+        
         try {
             world = OblicomWorld.getWorld(this);
         } catch (OblicomWorldException error) {
