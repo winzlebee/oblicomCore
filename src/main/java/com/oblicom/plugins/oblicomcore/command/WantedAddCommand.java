@@ -63,7 +63,7 @@ public class WantedAddCommand extends OblicomCommand {
         
         citizen.wanted(params[1]);
         
-        sender.sendMessage(ChatColor.GREEN + "Player " + params[0] + " is  now wanted for" + params[1] + ".");
+        sender.sendMessage(ChatColor.GREEN + "Player " + params[0] + " is now wanted for " + params[1] + ".");
         
         return true;
     }

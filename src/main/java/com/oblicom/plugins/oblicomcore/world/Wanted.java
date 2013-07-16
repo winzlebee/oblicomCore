@@ -1,11 +1,12 @@
 package com.oblicom.plugins.oblicomcore.world;
 
+import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import com.oblicom.plugins.oblicomcore.OblicomCore;
 import com.oblicom.plugins.oblicomcore.entity.Citizen;
-import com.oblicom.plugins.oblicomcore.exceptions.OblicomWorldException;
-import org.bukkit.configuration.ConfigurationSection;
+//import org.bukkit.configuration.ConfigurationSection;
 
 /**
  *
@@ -13,15 +14,9 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class Wanted {
     private OblicomWorld world;
-    private ConfigurationSection data;
     
     public Wanted () {
-        this.world = OblicomWorld.getWorld();
-        this.data = world.getData().getConfigurationSection("police.wanted.citizens");
-        
-        if (data == null) {
-            data = world.getData().createSection("police.wanted.citizens");
-        }
+        world = OblicomWorld.getWorld();
     }   
     
     /**
@@ -32,12 +27,19 @@ public class Wanted {
     public List<String> getList() {
         List<String> result = new ArrayList<String>();
         
-        for (String citizen : data.getKeys(false)) {
-            result.add(citizen + " for " + data.getString(citizen + ".reason") + "(Due date " + data.getString(citizen + ".date") + ")");
-        }
-        
-        if (result.isEmpty()) {
-            result.add("Nobody is currently wanted for anything!");
+        try {
+            ResultSet data = OblicomCore.database.query("SELECT * FROM wanted WHERE status = 1");
+            
+            while(data.next()) {
+                result.add(data.getString("player") + " for " + data.getString("reason"));
+            }
+            
+            if (result.isEmpty()) {
+                result.add("Nobody is currently wanted for anything!");
+            }
+        } catch(SQLException error) {
+            OblicomCore.log(error.getMessage());
+            result.add("Error to load wanted list. Please report to a staff!");
         }
         
         return result;
@@ -52,15 +54,13 @@ public class Wanted {
      */
     public void addToList(Citizen citizen, String reason, int time) {
         String player = citizen.getPlayer().getName();
-        
-        data.set(player + ".reason", reason);
-        data.set(player + ".time", time); // TODO ADD TIME
+        int date = time; // calculate the expire time.
         
         try {
-            world.save();
-        } catch (OblicomWorldException error) {
-            OblicomCore.log("Warning: error to save wanted data in file: " + error.getMessage());
-        }
+             OblicomCore.database.insert("INSERT INTO wanted (player, reason, status, date) VALUES ('" + player + "', '" + reason + "', 1, " + date + ")");
+        } catch(SQLException error) {
+            OblicomCore.log("Error to add wanted player! " + error.getMessage());
+        }        
     }
     
     /**
@@ -69,12 +69,10 @@ public class Wanted {
      * @param citizen
      */
     public void removeFromList(Citizen citizen) {
-        data.set(citizen.getPlayer().getName(), null);
-
         try {
-            world.save();
-        } catch (OblicomWorldException error) {
-            OblicomCore.log("Warning: error to save wanted data in file: " + error.getMessage());
+             OblicomCore.database.query("UPDATE wanted SET status = 0 WHERE player = '" + citizen.getPlayer().getName() + "'");
+        } catch(SQLException error) {
+            OblicomCore.log("Error to update wanted player! " + error.getMessage());
         }
     }
     
@@ -85,7 +83,7 @@ public class Wanted {
      * @return citizen is wanted?
      */
     public boolean isInList(Citizen citizen) {
-        return data.contains(citizen.getPlayer().getName());
+        return isInList(citizen.getPlayer().getName());
     }
     
     /**
@@ -95,6 +93,12 @@ public class Wanted {
      * @return player is wanted?
      */
     public boolean isInList(String name) {
-        return data.contains(name);
+        try {
+             ResultSet data = OblicomCore.database.query("SELECT * FROM wanted WHERE player = '" + name + "' AND status = 1");
+             return data.next();
+        } catch(SQLException error) {
+            OblicomCore.log("Error to select wanted player! " + error.getMessage());
+            return false;
+        }
     }
 }
