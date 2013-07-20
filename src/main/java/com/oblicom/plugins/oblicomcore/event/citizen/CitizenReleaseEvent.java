@@ -18,7 +18,7 @@ public class CitizenReleaseEvent extends CitizenEvent implements Cancellable {
         super(citizenReleased);
         this.cancel = false;
         
-        System.out.println("Citizen Realase");
+        System.out.println("Citizen Release");
     }
     
     public boolean isCancelled() {

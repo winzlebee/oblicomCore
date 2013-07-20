@@ -11,6 +11,7 @@ import com.oblicom.plugins.oblicomcore.OblicomCore;
 
 import com.oblicom.plugins.oblicomcore.entity.Citizen;
 import com.oblicom.plugins.oblicomcore.event.citizen.CitizenReleaseEvent;
+import org.bukkit.OfflinePlayer;
 
 import org.bukkit.entity.Player;
 
@@ -52,16 +53,14 @@ public class WantedAddCommand extends OblicomCommand {
            return false;
         }
         
-        Player target = (Player) plugin.getServer().getOfflinePlayer(params[0]);
+        OfflinePlayer target = plugin.getServer().getOfflinePlayer(params[0]);
         
-        Citizen citizen = new Citizen(target);
-        
-        if (citizen.isWanted()) {
+        if (OblicomCore.world.getWanted().isInList(target.getName())) {
            sender.sendMessage(ChatColor.RED + "Player " + params[0] + " already wanted!");
            return true;
         }
         
-        citizen.wanted(params[1]);
+        OblicomCore.world.getWanted().addToList(params[0], params[1], OblicomCore.configuration.getInt("police.wanted.time"));
         
         sender.sendMessage(ChatColor.GREEN + "Player " + params[0] + " is now wanted for " + params[1] + ".");
         

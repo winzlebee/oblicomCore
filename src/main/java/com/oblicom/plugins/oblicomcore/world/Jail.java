@@ -51,8 +51,15 @@ public class Jail {
      * @param citizen
      */    
     public void releaseCitizen(Citizen citizen) {
-        String player = citizen.getPlayer().getName();
-        
+        releaseCitizen(citizen.getPlayer().getName());
+    };
+    
+    /**
+     * Remove Citizen by name from the list of arrested.
+     * 
+     * @param player
+     */    
+    public void releaseCitizen(String player) {
         data.set(player, null);
     };
 

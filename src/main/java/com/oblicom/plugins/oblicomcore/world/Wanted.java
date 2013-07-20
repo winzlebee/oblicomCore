@@ -53,7 +53,17 @@ public class Wanted {
      * @param time
      */
     public void addToList(Citizen citizen, String reason, int time) {
-        String player = citizen.getPlayer().getName();
+        addToList(citizen.getPlayer().getName(), reason, time);     
+    }
+    
+    /**
+     * Add Citizen to the list of wanted players by name.
+     * 
+     * @param player
+     * @param reason 
+     * @param time
+     */
+    public void addToList(String player, String reason, int time) {
         int date = time; // calculate the expire time.
         
         try {
@@ -69,8 +79,17 @@ public class Wanted {
      * @param citizen
      */
     public void removeFromList(Citizen citizen) {
+        removeFromList(citizen.getPlayer().getName());
+    }
+    
+    /**
+     * Remove Citizen from the list of wanted players by name.
+     * 
+     * @param player
+     */
+    public void removeFromList(String player) {
         try {
-             OblicomCore.database.query("UPDATE wanted SET status = 0 WHERE player = '" + citizen.getPlayer().getName() + "'");
+             OblicomCore.database.query("UPDATE wanted SET status = 0 WHERE player = '" + player + "'");
         } catch(SQLException error) {
             OblicomCore.log("Error to update wanted player! " + error.getMessage());
         }

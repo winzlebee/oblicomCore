@@ -37,8 +37,10 @@ public class CitizenListener implements Listener {
     public void onCitizenReleased(CitizenReleaseEvent event) {
         Citizen citizen = event.getCitizen();
         
-        citizen.getPlayer().teleport(citizen.getPlayer().getWorld().getSpawnLocation());
-        citizen.sendChatMessage(ChatColor.GREEN + "You have been released.");
+        if (citizen.getPlayer().isOnline()) {
+            citizen.getPlayer().teleport(citizen.getPlayer().getWorld().getSpawnLocation());
+            citizen.sendChatMessage(ChatColor.GREEN + "You have been released.");
+        }
     }
 
     @EventHandler

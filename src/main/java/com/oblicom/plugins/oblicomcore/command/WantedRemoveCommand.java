@@ -11,6 +11,7 @@ import com.oblicom.plugins.oblicomcore.OblicomCore;
 
 import com.oblicom.plugins.oblicomcore.entity.Citizen;
 import com.oblicom.plugins.oblicomcore.event.citizen.CitizenReleaseEvent;
+import org.bukkit.OfflinePlayer;
 
 import org.bukkit.entity.Player;
 
@@ -52,16 +53,14 @@ public class WantedRemoveCommand extends OblicomCommand {
            return false;
         }
         
-        Player target = (Player) plugin.getServer().getOfflinePlayer(params[0]);
+        OfflinePlayer target = plugin.getServer().getOfflinePlayer(params[0]);
         
-        Citizen citizen = new Citizen(target);
-        
-        if (!citizen.isWanted()) {
+        if (!OblicomCore.world.getWanted().isInList(target.getName())) {
            sender.sendMessage(ChatColor.RED + "Player " + params[0] + " isn't on the wanted list!");
            return true;
         }
         
-        citizen.unwanted();
+        OblicomCore.world.getWanted().removeFromList(target.getName());
         
         sender.sendMessage(ChatColor.GREEN + "Player " + params[0] + " is no longer wanted.");
         

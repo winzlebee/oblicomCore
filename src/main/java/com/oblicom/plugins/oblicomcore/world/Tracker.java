@@ -33,7 +33,7 @@ public class Tracker {
             public void run() {
                 world.getTracker().removeFromList(police);
             }
-        }, time * 60 * 20L);         
+        }, time * 20L);
     }
     
     /**
