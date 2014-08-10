@@ -6,6 +6,7 @@ package me.wizzledonker.plugins.oblicomcore;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,7 +19,7 @@ import org.bukkit.entity.Player;
  */
 public class oblicomJail implements CommandExecutor {
     private OblicomCore plugin = null;
-    public Set<String> jailed = new HashSet<String>();
+    public Set<UUID> jailed = new HashSet<UUID>();
     
     public oblicomJail(OblicomCore plugin) {
         this.plugin = plugin;
@@ -46,8 +47,9 @@ public class oblicomJail implements CommandExecutor {
             }
             if (strings.length == 1) {
                 Player play = null;
-                for (String key : jailed) {
-                    if (key.equalsIgnoreCase(strings[0])) {
+                //Check 
+                for (UUID key : jailed) {
+                    if (plugin.getServer().getPlayer(key).getUniqueId().compareTo(key) == 0) {
                         play = plugin.getServer().getPlayer(key);
                     }
                 }
@@ -68,9 +70,9 @@ public class oblicomJail implements CommandExecutor {
                     return true;
                 }
                 Player player = (Player) cs;
-                if (jailed.contains(player.getName())) {
-                    if (plugin.economy.has(player.getName(), plugin.jail_bail)) {
-                        plugin.economy.withdrawPlayer(player.getName(), plugin.jail_bail);
+                if (jailed.contains(player.getUniqueId())) {
+                    if (plugin.economy.has(player, plugin.jail_bail)) {
+                        plugin.economy.withdrawPlayer(player, plugin.jail_bail);
                         releasePlayer(player);
                     } else {
                         player.sendMessage(ChatColor.RED + "You don't have enough money to bail out. Rot!");
@@ -86,16 +88,16 @@ public class oblicomJail implements CommandExecutor {
     
         
     public void jailPlayer(Player player) {
-        jailed.add(player.getName());
+        jailed.add(player.getUniqueId());
         player.sendMessage(ChatColor.RED + plugin.jail_message);
     }
     
     public void releasePlayer(Player player) {
-        if (player.isOnline() && jailed.contains(player.getName())) {
+        if (player.isOnline() && jailed.contains(player.getUniqueId())) {
             player.teleport(player.getWorld().getSpawnLocation());
             player.sendMessage(ChatColor.GREEN + plugin.jail_releasemessage);
         }
-        jailed.remove(player.getName());
+        jailed.remove(player.getUniqueId());
     }
     
     public void setJail(Player player) {

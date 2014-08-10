@@ -157,8 +157,8 @@ public class OblicomCore extends JavaPlugin {
     }
     
     private void transferFunds(final Player thief, Player victim, int cash) {
-        economy.withdrawPlayer(victim.getName(), cash);
-        economy.depositPlayer(thief.getName(), cash);
+        economy.withdrawPlayer(victim, cash);
+        economy.depositPlayer(thief, cash);
         thief.sendMessage(ChatColor.GREEN + "You have stolen " + ChatColor.WHITE + "$" + cash +
                 ChatColor.GREEN + " from " + victim.getName() + ". Now hide!");
     }
