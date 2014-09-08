@@ -7,6 +7,7 @@ package me.wizzledonker.plugins.oblicomcore;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -28,6 +29,7 @@ public class oblicomWanted implements CommandExecutor {
     
     public oblicomWanted(OblicomCore instance) {
         plugin = instance;
+        
     }
 
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
@@ -63,6 +65,65 @@ public class oblicomWanted implements CommandExecutor {
                 return true;
             }
         }
+        if (cmnd.getName().equalsIgnoreCase("addbounty")) {
+            if (cs instanceof Player) {
+                Player player = (Player) cs;
+                if (!player.hasPermission("oblicom.wanted.addbounty")) {
+                    player.sendMessage("You don't have permission to add some bounty!");
+                    return true;
+                }
+                if (strings.length == 2) {
+                    if (isInList(strings[0])) {
+                        try {
+                            int amount = Integer.parseInt(strings[1]);
+                            if (amount >= plugin.wanted_minimum_bounty) {
+                                if (plugin.economy.has(player, amount)) {
+                                    plugin.economy.withdrawPlayer(player, amount);
+                                    player.sendMessage(ChatColor.GREEN + "You have added " + ChatColor.WHITE
+                                            + plugin.economy.format(amount) + ChatColor.GREEN + " to " + ChatColor.WHITE + strings[0] + "'s bounty!");
+                                    this.addBounty(strings[0], amount);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "You don't have that much money");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "The minimum bounty to add is " + ChatColor.WHITE + plugin.economy.format(plugin.wanted_minimum_bounty));
+                            }
+                        } catch (NumberFormatException ex) {
+                            player.sendMessage(ChatColor.RED + "Your bounty payout must be a number");
+                        }
+                    } else {
+                        cs.sendMessage(ChatColor.RED + strings[0] + " isn't on the wanted list!");
+                    }
+                    return true;
+                }
+            } else {
+                cs.sendMessage(ChatColor.RED + "Only players can add bounty");
+            }
+        }
+        if (cmnd.getName().equalsIgnoreCase("removebounty")) {
+            if (cs instanceof Player) {
+                Player player = (Player) cs;
+                if (!player.hasPermission("oblicom.wanted.removebounty")) {
+                    player.sendMessage("You don't have permission to add some bounty!");
+                    return true;
+                }
+            }
+            if (strings.length == 2) {
+                if (isInList(strings[0])) {
+                    try {
+                        int amount = Integer.parseInt(strings[1]);
+                        cs.sendMessage(ChatColor.GREEN + "You have removed " + ChatColor.WHITE
+                            + plugin.economy.format(amount) + ChatColor.GREEN + " from " + ChatColor.WHITE + strings[0] + "'s bounty!");
+                        this.removeBounty(strings[0], amount);
+                    } catch (NumberFormatException ex) {
+                        cs.sendMessage(ChatColor.RED + "Your bounty payout must be a number");
+                    }
+                } else {
+                    cs.sendMessage(ChatColor.RED + strings[0] + " isn't on the wanted list!");
+                }
+                return true;
+            }
+        }
         if (cmnd.getName().equalsIgnoreCase("addwanted")) {
             if (cs instanceof Player) {
                 Player player = (Player) cs;
@@ -71,9 +132,13 @@ public class oblicomWanted implements CommandExecutor {
                     return true;
                 }
             }
-            if (strings.length == 2) {
+            if (strings.length == 3) {
                 if (!isInList(strings[0])) {
-                    addToList(strings[0], strings[1]);
+                    try {
+                        addToList(strings[0], strings[1], Integer.parseInt(strings[2]));
+                    } catch (NumberFormatException ex) {
+                        cs.sendMessage(ChatColor.RED + "The last argument must be a number! (no spaces in the reason)");
+                    }
                     cs.sendMessage(ChatColor.GREEN + "Player " + strings[0] + " is now wanted for " + strings[1]);
                 } else {
                     cs.sendMessage(ChatColor.RED + strings[0] + " is already wanted!");
@@ -113,7 +178,8 @@ public class oblicomWanted implements CommandExecutor {
         List<String> result = new ArrayList<String>();
         
         for (String p : getWantedConfig().getConfigurationSection("wanted").getKeys(false)) {
-            result.add(p + " for " + getWantedConfig().getString("wanted." + p + ".reason"));
+            result.add(ChatColor.AQUA + Double.toString(getWantedPayout(p)) + ": " + ChatColor.WHITE + p + " for " + getWantedConfig().getString("wanted." + p + ".reason")
+                    + ChatColor.BOLD + ChatColor.GRAY + " (" + getDaysToRelease(p) + (getDaysToRelease(p) == 1 ? " Day)" : " Days)"));
         }
         
         if (result.isEmpty()) {
@@ -123,8 +189,31 @@ public class oblicomWanted implements CommandExecutor {
         return result;
     }
     
-    public void addToList(String killer, String reason) {
+    public double getWantedPayout(String p) {
+        double initial = plugin.wanted_payouts.get(getWantedConfig().getString("wanted." + p + ".reason")) != null ?
+                plugin.wanted_payouts.get(getWantedConfig().getString("wanted." + p + ".reason")) :
+                plugin.wanted_payouts.get("default");
+        return initial + getWantedConfig().getDouble("wanted." + p + ".payout");
+    }
+    
+    public void addBounty(String player, double amount) {
+        double original = getWantedConfig().getDouble("wanted." + player + ".payout");
+        getWantedConfig().set("wanted." + player + ".payout", amount+original);
+    }
+    
+    public void removeBounty(String player, double amount) {
+        double original = getWantedConfig().getDouble("wanted." + player + ".payout");
+        getWantedConfig().set("wanted." + player + ".payout", amount-original);
+    }
+    
+    public int getDaysToRelease(String p) {
+        return Math.round((this.getWantedConfig().getLong("wanted." + p + ".release_time")-System.currentTimeMillis())/1000/60/60/24);
+    }
+    
+    public void addToList(String killer, String reason, int days) {
         getWantedConfig().set("wanted." + killer + ".reason", reason);
+        long finalDate = System.currentTimeMillis() + (days*24*60*60*1000);
+        getWantedConfig().set("wanted." + killer + ".release_time", finalDate);
         saveWantedConfig();
     }
     

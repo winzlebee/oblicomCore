@@ -54,7 +54,7 @@ public class oblicomJail implements CommandExecutor {
                     }
                 }
                 if (play != null) {
-                    releasePlayer(play);
+                    releasePlayer(play.getUniqueId());
                     cs.sendMessage(ChatColor.GREEN + play.getName() + " Released.");
                     return true;
                 } else {
@@ -73,7 +73,7 @@ public class oblicomJail implements CommandExecutor {
                 if (jailed.contains(player.getUniqueId())) {
                     if (plugin.economy.has(player, plugin.jail_bail)) {
                         plugin.economy.withdrawPlayer(player, plugin.jail_bail);
-                        releasePlayer(player);
+                        releasePlayer(player.getUniqueId());
                     } else {
                         player.sendMessage(ChatColor.RED + "You don't have enough money to bail out. Rot!");
                     }
@@ -92,12 +92,14 @@ public class oblicomJail implements CommandExecutor {
         player.sendMessage(ChatColor.RED + plugin.jail_message);
     }
     
-    public void releasePlayer(Player player) {
-        if (player.isOnline() && jailed.contains(player.getUniqueId())) {
+    public void releasePlayer(UUID release) {
+        Player player = plugin.getServer().getPlayer(release);
+        
+        if ((player != null) && jailed.contains(release)) {
             player.teleport(player.getWorld().getSpawnLocation());
             player.sendMessage(ChatColor.GREEN + plugin.jail_releasemessage);
         }
-        jailed.remove(player.getUniqueId());
+        jailed.remove(release);
     }
     
     public void setJail(Player player) {

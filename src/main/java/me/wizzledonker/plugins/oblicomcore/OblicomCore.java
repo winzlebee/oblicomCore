@@ -2,10 +2,13 @@ package me.wizzledonker.plugins.oblicomcore;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -35,6 +38,16 @@ public class OblicomCore extends JavaPlugin {
     public oblicomWanted wanted = new oblicomWanted(this);
     public OblicomRankScore scores = null;
     
+    //Wanted checking time, in minutes
+    public int wanted_check_time;
+    public int wanted_time_kill;
+    public int wanted_time_pickpocket;
+    public int wanted_time_steal;
+    
+    //Payouts for the wanted list
+    public Map<String, Double> wanted_payouts = new HashMap<String, Double>();
+    public double wanted_minimum_bounty;
+    
     //All the variables from the config
     public int chance;
     public int time;
@@ -59,6 +72,7 @@ public class OblicomCore extends JavaPlugin {
     public String jail_message;
     public String jail_releasemessage;
     public int jail_score;
+    public double jail_police_bonus;
     
     //Stick locator variables
     public int locator_time;
@@ -67,7 +81,7 @@ public class OblicomCore extends JavaPlugin {
     public int award_monster;
     public int award_passive;
     
-    public Set<String> notAllowed = new HashSet<String>();
+    public Set<UUID> notAllowed = new HashSet<UUID>();
     
     @Override
     public void onDisable() {
@@ -105,6 +119,22 @@ public class OblicomCore extends JavaPlugin {
         getCommand("bail").setExecutor(jail);
         
         setupConfig();
+        
+        //Run a checker to make sure that people are removed from the wanted list
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+
+                public void run() {
+                    //Check if each player's wanted time is over
+                    for (String p : wanted.getWantedConfig().getConfigurationSection("wanted").getKeys(false)) {
+                        long timeWhenUnwanted = wanted.getWantedConfig().getLong("wanted." + p + ".release_time");
+                        if (timeWhenUnwanted <= System.currentTimeMillis()) {
+                            wanted.removeFromList(p);
+                            getServer().broadcastMessage(ChatColor.GOLD + "Player " + p + " is no longer wanted for anything.");
+                        }
+                    }
+                }
+                
+            }, 0, 20L*60*this.wanted_check_time);
         
         log("plugin for oblicom.com has loaded.");
     }
@@ -153,6 +183,7 @@ public class OblicomCore extends JavaPlugin {
             int remainder = rand.nextInt(victimBalance) + 1;
             transferFunds(thief, victim, remainder);
         }
+        victim.sendMessage(ChatColor.RED + "You feel someone rummage through your pockets, faintly");
         scores.addScore(score, thief);
     }
     
@@ -170,6 +201,16 @@ public class OblicomCore extends JavaPlugin {
             //Set all the config defaults, and the header
 
             getConfig().options().header("Plugin by WizzleDonker."); 
+            
+            //Set the wanted list check time in minutes
+            getConfig().addDefault("wanted.checktime", 30);
+            getConfig().addDefault("wanted.pickpocketTime", 1);
+            getConfig().addDefault("wanted.stealTime", 4);
+            getConfig().addDefault("wanted.killTime", 8);
+            
+            //Set the default payout for killing a wanted player
+            getConfig().addDefault("wanted.payouts.default", 500.0);
+            getConfig().addDefault("wanted.minimum_bounty", 500.0);
             
             //Set the pickpocket defaults
             getConfig().addDefault("pickpocket.chance", 25);
@@ -198,6 +239,7 @@ public class OblicomCore extends JavaPlugin {
             getConfig().addDefault("jail.message", "You have been Jailed!");
             getConfig().addDefault("jail.releasemessage", "You have been Released!");
             getConfig().addDefault("jail.score", 50);
+            getConfig().addDefault("jail.police_bonus", 2);
             List<String> commands = Arrays.asList("login", "register", "list");
             getConfig().addDefault("jail.allowed-commands", commands);
             
@@ -222,6 +264,16 @@ public class OblicomCore extends JavaPlugin {
         humiliate_message = getConfig().getString("pickpicket.message", "%thief% attempted to steal from %victim%!");
         score = getConfig().getInt("pickpocket.score", 25);
         
+        wanted_time_pickpocket = getConfig().getInt("wanted.pickpocketTime", 1);
+        wanted_time_steal = getConfig().getInt("wanted.stealTime", 5);
+        wanted_time_kill = getConfig().getInt("wanted.killTime", 8);
+        this.wanted_check_time = getConfig().getInt("wanted.checktime", 30);
+        
+        for (String key : getConfig().getConfigurationSection("wanted.payouts").getKeys(false)) {
+            this.wanted_payouts.put(key, getConfig().getDouble("wanted.payouts." + key));
+        }
+        wanted_minimum_bounty = getConfig().getDouble("wanted.minimum_bounty", 500.0);
+        
         lockpick_damage = getConfig().getInt("lockpick.damage", 3);
         lockpick_item = getConfig().getInt("lockpick.item", 265);
         lockpick_chance = getConfig().getInt("lockpick.chance", 25);
@@ -238,6 +290,7 @@ public class OblicomCore extends JavaPlugin {
         jail_message = getConfig().getString("jail.message");
         jail_releasemessage = getConfig().getString("jail.releasemessage");
         jail_score = getConfig().getInt("jail.score", 50);
+        jail_police_bonus = getConfig().getDouble("jail.police_bonus", 2);
         
         locator_time = getConfig().getInt("locator.time", 30);
         

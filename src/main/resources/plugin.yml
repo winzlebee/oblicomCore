@@ -36,6 +36,12 @@ permissions:
   oblicom.wanted.locator:
     description: These players can use the locator stick to find wanted players
     default: op
+  oblicom.wanted.addbounty:
+    description: These players can add to the bounty of a player
+    default: op
+  oblicom.wanted.removebounty:
+    description: These players can remove from the bounty of a player
+    default: op
   oblicom.pvp.neutral:
     description: These players can't damage or recieve damage from players
     default: false
@@ -59,8 +65,14 @@ commands:
     aliases: [removefromwanted, wremove, unwant]
   addwanted:
     description: Adds a player to the wanted list
-    usage: /<command> <player> <reason>
+    usage: /<command> <player> <reason> <days>
     aliases: [addtowanted, wadd]
+  addbounty:
+    description: Adds to the bounty of a player
+    usage: /<command> <player> <amount>
+  removebounty:
+    description: Removes from a player's bounty
+    usage: /<command> <player> <amount>
   oblisetjail:
     description: Set the Oblicom Jail
     usage: /<command>

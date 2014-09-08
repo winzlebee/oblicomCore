@@ -6,6 +6,7 @@ package me.wizzledonker.plugins.oblicomcore;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,8 +31,8 @@ public class oblicomPlayerListener implements Listener {
         plugin = instance;
     }
     
-    private Set<String> noLockPick = new HashSet<String>();
-    private Set<String> noLocatorStick = new HashSet<String>();
+    private Set<UUID> noLockPick = new HashSet<UUID>();
+    private Set<UUID> noLocatorStick = new HashSet<UUID>();
     
     @EventHandler
     public void whenPlayerInteracts(PlayerInteractEntityEvent event) {
@@ -53,7 +54,7 @@ public class oblicomPlayerListener implements Listener {
                             thief.sendMessage(ChatColor.YELLOW + "You don't have enough experience to pickpocket! You need to be level " + plugin.experience);
                             return;
                         }
-                        if (plugin.notAllowed.contains(thief.getName())) {
+                        if (plugin.notAllowed.contains(thief.getUniqueId())) {
                             thief.sendMessage(ChatColor.DARK_RED + "Cool it! You can't steal that often.");
                             return;
                         }
@@ -62,10 +63,10 @@ public class oblicomPlayerListener implements Listener {
                         } else {
                             pickPocketAlert(thief, victim);
                         }
-                        plugin.notAllowed.add(thief.getName());
+                        plugin.notAllowed.add(thief.getUniqueId());
                         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 public void run() {
-                                    plugin.notAllowed.remove(thief.getName());
+                                    plugin.notAllowed.remove(thief.getUniqueId());
                                 }
                         }, plugin.time*60*20L);
                         thief.setLevel(thief.getLevel() - plugin.experience);
@@ -84,7 +85,7 @@ public class oblicomPlayerListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-            if (noLocatorStick.contains(player.getName())) {
+            if (noLocatorStick.contains(player.getUniqueId())) {
                 return;
             }
             if (player.hasPermission("oblicom.wanted.locator")) {
@@ -95,10 +96,10 @@ public class oblicomPlayerListener implements Listener {
                             play.getWorld().strikeLightningEffect(play.getLocation());
                         }
                     }
-                    noLocatorStick.add(player.getName());
+                    noLocatorStick.add(player.getUniqueId());
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                         public void run() {
-                            noLocatorStick.remove(player.getName());
+                            noLocatorStick.remove(player.getUniqueId());
                         }
                     }, plugin.locator_time*20L);
                 }
@@ -121,7 +122,7 @@ public class oblicomPlayerListener implements Listener {
                 player.sendMessage(ChatColor.YELLOW + "You don't have enough experience to steal! You need to be level " + plugin.lockpick_experience);
                 return;
             }
-            if (noLockPick.contains(player.getName())) {
+            if (noLockPick.contains(player.getUniqueId())) {
                 player.sendMessage(ChatColor.RED + "Cool it! You can't steal that often!");
                 return;
             }
@@ -130,7 +131,7 @@ public class oblicomPlayerListener implements Listener {
                 player.sendMessage(ChatColor.DARK_GREEN + "Success! You have picked this lock.");
                 event.setCancelled(false);
                 plugin.getServer().broadcastMessage(ChatColor.DARK_RED + "Fear spreads through the land as news of a lockpick arrives!");
-                plugin.wanted.addToList(player.getName(), "theft");
+                plugin.wanted.addToList(player.getName(), "theft", plugin.wanted_time_steal);
                 plugin.scores.addScore(plugin.lockpick_score, player);
             } else {
                 player.sendMessage(ChatColor.RED + "You fiddle with the lock and eventually fail, hurting your finger.");
@@ -141,10 +142,10 @@ public class oblicomPlayerListener implements Listener {
                     player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
                 }
             }
-            noLockPick.add(player.getName());
+            noLockPick.add(player.getUniqueId());
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
-                        noLockPick.remove(player.getName());
+                        noLockPick.remove(player.getUniqueId());
                     }
             }, plugin.lockpick_time*60*20L);
             player.setLevel(player.getLevel() - plugin.lockpick_experience);
@@ -154,7 +155,7 @@ public class oblicomPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        if (plugin.jail.jailed.contains(player.getName())) {
+        if (plugin.jail.jailed.contains(player.getUniqueId())) {
             plugin.log("A player was jailed!");
             event.setRespawnLocation(plugin.jail_location);
         }
@@ -166,7 +167,7 @@ public class oblicomPlayerListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        if (plugin.jail.jailed.contains(player.getName())) {
+        if (plugin.jail.jailed.contains(player.getUniqueId())) {
             player.sendMessage("You are jailed! You can't break blocks!");
             event.setCancelled(true);
         }
@@ -181,7 +182,7 @@ public class oblicomPlayerListener implements Listener {
             return;
         }
         
-        if (plugin.jail.jailed.contains(player.getName())) {
+        if (plugin.jail.jailed.contains(player.getUniqueId())) {
             player.sendMessage("You are jailed! You can't use commands!");
             event.setCancelled(true);
         }
@@ -194,11 +195,11 @@ public class oblicomPlayerListener implements Listener {
                 Player damplayer = (Player) event.getEntity();
                 Player player = (Player) event.getDamager();
                 if (event.isCancelled()) {
-                    if (plugin.wanted.isInList(damplayer.getName())) {
+                    if (plugin.wanted.isInList(damplayer.getName()) || plugin.wanted.isInList(player.getName())) {
                         event.setCancelled(false);
                     }
                 }
-                if (plugin.jail.jailed.contains(player.getName())) {
+                if (plugin.jail.jailed.contains(player.getUniqueId())) {
                     player.sendMessage("You are jailed! You can't hurt inmates!");
                     damplayer.sendMessage(ChatColor.RED + "You were abused by " + player.getName());
                     event.setCancelled(true);
@@ -215,8 +216,8 @@ public class oblicomPlayerListener implements Listener {
         
         plugin.getServer().broadcastMessage(ChatColor.DARK_PURPLE + alertMsg);
         thief.damage(plugin.damage);
-        plugin.wanted.addToList(thief.getName(), "pickpocketing");
-        plugin.scores.addScore(plugin.score, victim);
+        plugin.wanted.addToList(thief.getName(), "pickpocketing", plugin.wanted_time_pickpocket);
+        plugin.scores.addScore(plugin.score/2, victim);
     }
     
 }
