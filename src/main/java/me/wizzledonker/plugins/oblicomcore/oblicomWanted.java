@@ -178,7 +178,7 @@ public class oblicomWanted implements CommandExecutor {
         List<String> result = new ArrayList<String>();
         
         for (String p : getWantedConfig().getConfigurationSection("wanted").getKeys(false)) {
-            result.add(ChatColor.AQUA + Double.toString(getWantedPayout(p)) + ": " + ChatColor.WHITE + p + " for " + getWantedConfig().getString("wanted." + p + ".reason")
+            result.add(ChatColor.AQUA + plugin.economy.format(getWantedPayout(p)) + ": " + ChatColor.WHITE + p + " for " + getWantedConfig().getString("wanted." + p + ".reason")
                     + ChatColor.BOLD + ChatColor.GRAY + " (" + getDaysToRelease(p) + (getDaysToRelease(p) == 1 ? " Day)" : " Days)"));
         }
         
@@ -193,7 +193,11 @@ public class oblicomWanted implements CommandExecutor {
         double initial = plugin.wanted_payouts.get(getWantedConfig().getString("wanted." + p + ".reason")) != null ?
                 plugin.wanted_payouts.get(getWantedConfig().getString("wanted." + p + ".reason")) :
                 plugin.wanted_payouts.get("default");
-        return initial + getWantedConfig().getDouble("wanted." + p + ".payout");
+        return initial + getRawWantedPayout(p);
+    }
+    
+    private double getRawWantedPayout(String p) {
+        return getWantedConfig().getDouble("wanted." + p + ".payout");
     }
     
     public void addBounty(String player, double amount) {
@@ -203,7 +207,7 @@ public class oblicomWanted implements CommandExecutor {
     
     public void removeBounty(String player, double amount) {
         double original = getWantedConfig().getDouble("wanted." + player + ".payout");
-        getWantedConfig().set("wanted." + player + ".payout", amount-original);
+        getWantedConfig().set("wanted." + player + ".payout", original-amount);
     }
     
     public int getDaysToRelease(String p) {
@@ -211,6 +215,12 @@ public class oblicomWanted implements CommandExecutor {
     }
     
     public void addToList(String killer, String reason, int days) {
+        //Add to the bounty if already on the list
+        if (isInList(killer)) {
+            days += getDaysToRelease(killer);
+            getWantedConfig().set("wanted." + killer + ".payout", getWantedPayout(killer));
+        }
+        
         getWantedConfig().set("wanted." + killer + ".reason", reason);
         long finalDate = System.currentTimeMillis() + (days*24*60*60*1000);
         getWantedConfig().set("wanted." + killer + ".release_time", finalDate);

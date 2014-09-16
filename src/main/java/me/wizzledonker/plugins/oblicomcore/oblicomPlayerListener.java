@@ -194,11 +194,17 @@ public class oblicomPlayerListener implements Listener {
             if (event.getEntity() instanceof Player) {
                 Player damplayer = (Player) event.getEntity();
                 Player player = (Player) event.getDamager();
-                if (event.isCancelled()) {
-                    if (plugin.wanted.isInList(damplayer.getName()) || plugin.wanted.isInList(player.getName())) {
-                        event.setCancelled(false);
+                if (plugin.wanted.isInList(damplayer.getName())) {
+                    if (event.isCancelled()) {
+                        if (plugin.wanted.isInList(damplayer.getName())) {
+                            event.setCancelled(false);
+                        }
                     }
                 }
+                if (plugin.wanted.isInList(player.getName())) {
+                    event.setDamage(event.getDamage()*plugin.wanted_player_nerf);
+                }
+                
                 if (plugin.jail.jailed.contains(player.getUniqueId())) {
                     player.sendMessage("You are jailed! You can't hurt inmates!");
                     damplayer.sendMessage(ChatColor.RED + "You were abused by " + player.getName());

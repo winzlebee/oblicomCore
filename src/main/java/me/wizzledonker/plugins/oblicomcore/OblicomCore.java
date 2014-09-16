@@ -80,8 +80,14 @@ public class OblicomCore extends JavaPlugin {
     //Award variables
     public int award_monster;
     public int award_passive;
+    public int max_points;
+    public double max_money;
+    
+    public double wanted_player_nerf;
     
     public Set<UUID> notAllowed = new HashSet<UUID>();
+    public Map<UUID, Double> earnedCurrency = new HashMap<UUID, Double>();
+    public Map<UUID, Integer> earnedPoints = new HashMap<UUID, Integer>();
     
     @Override
     public void onDisable() {
@@ -114,6 +120,8 @@ public class OblicomCore extends JavaPlugin {
         getCommand("wanted").setExecutor(wanted);
         getCommand("unwanted").setExecutor(wanted);
         getCommand("addwanted").setExecutor(wanted);
+        getCommand("addbounty").setExecutor(wanted);
+        getCommand("removebounty").setExecutor(wanted);
         getCommand("oblisetjail").setExecutor(jail);
         getCommand("obliunjail").setExecutor(jail);
         getCommand("bail").setExecutor(jail);
@@ -135,6 +143,16 @@ public class OblicomCore extends JavaPlugin {
                 }
                 
             }, 0, 20L*60*this.wanted_check_time);
+        
+        //Every hour, reset the two maps containing the earned points of the currency
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+
+                public void run() {
+                    earnedCurrency.clear();
+                    earnedPoints.clear();
+                }
+                
+            }, 0, 20L*60*60);
         
         log("plugin for oblicom.com has loaded.");
     }
@@ -249,6 +267,9 @@ public class OblicomCore extends JavaPlugin {
             getConfig().addDefault("award.monster", 15);
             getConfig().addDefault("award.player", 50);
             getConfig().addDefault("award.passive", 10);
+            getConfig().addDefault("award.maxPointsPerHour", 50);
+            getConfig().addDefault("award.maxMoneyPerHour", 100.0);
+            getConfig().addDefault("award.wantedPlayerDamageNerf", 0.5);
             
             //TODO: Add defaults for other aspects of the plugin
             getConfig().options().copyHeader(true);
@@ -296,6 +317,9 @@ public class OblicomCore extends JavaPlugin {
         
         award_monster = getConfig().getInt("award.monster", 15);
         award_passive = getConfig().getInt("award.passive", 10);
+        max_points = getConfig().getInt("award.maxPointsPerHour", 50);
+        max_money = getConfig().getDouble("award.maxMoneyPerHour", 100.0);
+        this.wanted_player_nerf = getConfig().getDouble("award.wantedPlayerDamageNerf", 0.5);
         
         log("finished loading/generating config file.");
     }
