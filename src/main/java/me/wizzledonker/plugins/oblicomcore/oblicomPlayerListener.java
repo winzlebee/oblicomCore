@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -112,7 +113,7 @@ public class oblicomPlayerListener implements Listener {
             return;
         }
         Block block = event.getClickedBlock();
-        if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.WOODEN_DOOR)) {
+        if (block.getType().equals(Material.CHEST)) {
             if (!event.isCancelled()) return;
             if (player.getItemInHand().getTypeId() != plugin.lockpick_item) {
                 player.sendMessage("Wrong item for lock-picking! Use an " + Material.getMaterial(plugin.lockpick_item).name());
@@ -128,8 +129,22 @@ public class oblicomPlayerListener implements Listener {
             }
             Random rand = new Random();
             if (rand.nextInt(100) <= plugin.lockpick_chance) {
-                player.sendMessage(ChatColor.DARK_GREEN + "Success! You have picked this lock.");
-                event.setCancelled(false);
+                player.sendMessage(ChatColor.DARK_GREEN + "Success! You have picked this lock. You have recieved a random item.");
+                Chest chest = (Chest) block.getState();
+                int num = chest.getInventory().getSize();
+                
+                boolean found = false;
+                
+                //Random item from the chest
+                while (found = false) {
+                    int randomItem = rand.nextInt(num);
+                    if (chest.getInventory().getItem(randomItem).getType() != Material.AIR) {
+                        player.getInventory().addItem(chest.getInventory().getItem(randomItem));
+                        chest.getInventory().setItem(randomItem, null);
+                        found = true;
+                    }
+                }
+                
                 plugin.getServer().broadcastMessage(ChatColor.DARK_RED + "Fear spreads through the land as news of a lockpick arrives!");
                 plugin.wanted.addToList(player.getName(), "theft", plugin.wanted_time_steal);
                 plugin.scores.addScore(plugin.lockpick_score, player);
@@ -194,13 +209,6 @@ public class oblicomPlayerListener implements Listener {
             if (event.getEntity() instanceof Player) {
                 Player damplayer = (Player) event.getEntity();
                 Player player = (Player) event.getDamager();
-                if (plugin.wanted.isInList(damplayer.getName())) {
-                    if (event.isCancelled()) {
-                        if (plugin.wanted.isInList(damplayer.getName())) {
-                            event.setCancelled(false);
-                        }
-                    }
-                }
                 if (plugin.wanted.isInList(player.getName())) {
                     event.setDamage(event.getDamage()*plugin.wanted_player_nerf);
                 }

@@ -85,3 +85,6 @@ commands:
     description: Allows a player to bail out of jail
     usage: /<command>
     aliases: [bailout, payout, unjailme]
+  oblireload:
+    description: Reload the oblicom plugin
+    usage: /<command>

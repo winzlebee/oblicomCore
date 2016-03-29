@@ -26,6 +26,17 @@ public class oblicomJail implements CommandExecutor {
     }
     
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+        if (cmnd.getName().equalsIgnoreCase("oblireload")) {
+            if (cs instanceof Player) {
+                if (!((Player) cs).hasPermission("oblicom.jail.set")) {
+                    cs.sendMessage(ChatColor.RED + "No Permission!");
+                    return true;
+                }
+            }
+            cs.sendMessage(ChatColor.RED + "oblicom reloaded");
+            plugin.reloadConfig();
+            return true;
+        }
         if (cmnd.getName().equalsIgnoreCase("oblisetjail")) {
             if (cs instanceof Player) {
                 Player player = (Player) cs;

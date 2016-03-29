@@ -188,7 +188,7 @@ public class OblicomCore extends JavaPlugin {
         Random rand = new Random();
         int cash = rand.nextInt(max_amount) + 1;
         
-        if (economy.getBalance(victim.getName()) >= cash) {
+        if (economy.getBalance(victim) >= cash) {
             transferFunds(thief, victim, cash);
         } else {
             int victimBalance = (int) economy.getBalance(victim.getName());
